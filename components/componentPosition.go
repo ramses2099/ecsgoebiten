@@ -8,7 +8,7 @@ type componentPosition struct {
 	Name string
 }
 
-func (p *componentPosition) GetName() string {
+func (p *componentPosition) GetComponentName() string {
 	return p.Name
 }
 

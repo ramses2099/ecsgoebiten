@@ -3,7 +3,7 @@ package components
 import cons "github.com/ramses2099/ecsgoebiten/constants"
 
 type Component interface {
-	GetName() string
+	GetComponentName() string
 }
 
 type componentHealth struct {
@@ -11,7 +11,7 @@ type componentHealth struct {
 	Value int32
 }
 
-func (h *componentHealth) GetName() string {
+func (h *componentHealth) GetComponentName() string {
 	return h.Name
 }
 

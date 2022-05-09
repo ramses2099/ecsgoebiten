@@ -48,8 +48,12 @@ func main() {
 	e.AddComponents(cons.ComponentPosition, p)
 
 	for _, cp := range e.GetComponents() {
-		fmt.Println("Name component", cp.GetName())
+		fmt.Println("Name component", cp.GetComponentName())
 	}
+
+	em := entities.NewEntityManager(e)
+
+	fmt.Printf("Lenght Entity Manager %v \n", em.GetLength())
 
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)

@@ -42,3 +42,13 @@ func (e *Entity) GetComponent(name string) components.Component {
 func (e *Entity) DeleteComponent(name string) {
 	delete(e.Components, name)
 }
+
+// Function Has Component by name
+func (e *Entity) HasComponent(name string) bool {
+	_, ok := e.Components[name]
+	if ok {
+		return true
+	} else {
+		return false
+	}
+}

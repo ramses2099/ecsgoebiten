@@ -10,13 +10,11 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/ramses2099/ecsgoebiten/components"
-	cons "github.com/ramses2099/ecsgoebiten/constants"
-	"github.com/ramses2099/ecsgoebiten/entities"
+	"github.com/ramses2099/ecsgoebiten/ecs"
 )
 
 var (
-	e entities.Entity
+	entitymanager *ecs.ManagerEntity
 )
 
 type Game struct{}
@@ -30,6 +28,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// et := "Id Entity " + e.Id + "" + "\n component name " + e.GetComponent("Health").GetName() + ""
 	// ebitenutil.DebugPrint(screen, et)
 
+	ecs.Each(entitymanager, ecs.Transform{}, func(id ecs.Id, a interface{}) {
+		transform := ecs.Transform{}
+		ok := ecs.Read(entitymanager, id, &transform)
+		if ok {
+			transform.X += 1
+			fmt.Printf(" x: %v y %v", transform.X, transform.Y)
+		}
+	})
+
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -39,21 +46,20 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 func main() {
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("ECS Game")
-	//
-	e = entities.NewEntity()
-	c := components.NewComponentHealth(100)
-	e.AddComponents(cons.ComponentHealth, c)
 
-	p := components.NewComponentPosition(20, 25)
-	e.AddComponents(cons.ComponentPosition, p)
+	//entity manager
+	entitymanager = ecs.NewManagerEntity()
 
-	for _, cp := range e.GetComponents() {
-		fmt.Println("Name component", cp.GetComponentName())
+	entityId := entitymanager.NewId()
+	ecs.Write(entitymanager, entityId, ecs.Transform{X: 10, Y: 20})
+
+	transform := ecs.Transform{}
+	ok := ecs.Read(entitymanager, entityId, &transform)
+	if ok {
+		fmt.Printf(" x: %v y %v", transform.X, transform.Y)
 	}
 
-	em := entities.NewEntityManager(e)
-
-	fmt.Printf("Lenght Entity Manager %v \n", em.GetLength())
+	//component
 
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)

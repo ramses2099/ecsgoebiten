@@ -7,35 +7,62 @@ package main
 
 import (
 	"fmt"
+	_ "image/png"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/ramses2099/ecsgoebiten/ecs"
 )
 
 var (
 	entitymanager *ecs.ManagerEntity
+	shipImage     *ebiten.Image
 )
 
-type Game struct{}
+// init function
+func init() {
+	var err error
+	shipImage, _, err = ebitenutil.NewImageFromFile("asset/ship_0001.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+type Game struct{ inited bool }
+
+func (g *Game) Init() {
+	defer func() {
+		g.inited = true
+	}()
+}
 
 func (g *Game) Update() error {
+	if !g.inited {
+		g.Init()
+	}
+
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	// et := "Id Entity " + e.Id + "" + "\n component name " + e.GetComponent("Health").GetName() + ""
-	// ebitenutil.DebugPrint(screen, et)
+	// Write your game's rendering.
+	msg := fmt.Sprintf(`TPS: %0.2f FPS: %0.2f`, ebiten.CurrentTPS(), ebiten.CurrentFPS())
+	ebitenutil.DebugPrint(screen, msg)
 
-	ecs.Each(entitymanager, ecs.Transform{}, func(id ecs.Id, a interface{}) {
-		transform := ecs.Transform{}
-		ok := ecs.Read(entitymanager, id, &transform)
-		if ok {
-			transform.X += 1
-			fmt.Printf(" x: %v y %v", transform.X, transform.Y)
-		}
-	})
+	//draw image
+	screen.DrawImage(shipImage, nil)
+
+	// ecs.Each(entitymanager, ecs.Transform{}, func(id ecs.Id, a interface{}) {
+	// 	transform := ecs.Transform{}
+	// 	ok := ecs.Read(entitymanager, id, &transform)
+	// 	if ok {
+	// 		transform.X += 1
+	// 		fmt.Printf(" x: %v y %v", transform.X, transform.Y)
+	// 	}
+	// })
 
 }
 
